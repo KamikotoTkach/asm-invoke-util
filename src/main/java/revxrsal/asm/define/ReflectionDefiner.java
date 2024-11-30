@@ -25,31 +25,36 @@ package revxrsal.asm.define;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Uses reflection to access {@link ClassLoader}#defineClass(String, byte[], int, int)
+ * Uses MethodHandle to access {@link ClassLoader}#defineClass(String, byte[], int, int)
  */
 final class ReflectionDefiner implements ClassDefiner {
-
-    private static Method define;
-
-    @Override public @NotNull Class<?> defineClass(@NotNull ClassLoader classLoader, @NotNull String name, byte[] data) {
+    
+    private static MethodHandle define;
+    
+    @Override
+    public @NotNull Class<?> defineClass(@NotNull ClassLoader classLoader, @NotNull String name, byte[] data) {
         try {
             return (Class<?>) define.invoke(classLoader, name, data, 0, data.length);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Throwable e) {
             throw new IllegalStateException(e);
         }
     }
-
+    
     static {
         try {
-            define = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-            define.setAccessible(true);
+            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(ClassLoader.class, MethodHandles.lookup());
+            define = lookup.findVirtual(ClassLoader.class, "defineClass",
+                                        MethodType.methodType(Class.class, String.class, byte[].class, int.class, int.class));
         } catch (Throwable ignored) {}
     }
-
+    
     public static boolean isSupported() {
         return define != null;
     }

@@ -43,31 +43,15 @@ needed, performs just like direct method execution.
 
 # Usage
 
-### Gradle
-
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    implementation 'com.github.Revxrsal:asm-invoke-util:1.0'
-}
-```
 
 ### Maven
 
 ```xml
 
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-
 <dependency>
-    <groupId>com.github.Revxrsal</groupId>
+    <groupId>ru.cwcode.tkach.fork.revxrsal</groupId>
     <artifactId>asm-invoke-util</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
